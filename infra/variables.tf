@@ -14,7 +14,7 @@ variable "github_token" {
 
 variable "github_repo" {
   type    = string
-  default = "devops-terraform-capstone"
+  default = "terraform-academy"
 }
 
 variable "github_user" {
