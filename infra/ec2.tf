@@ -35,7 +35,7 @@ resource "aws_security_group" "backend_server" {
   ingress {
     from_port   = 22
     to_port     = 22
-    protocol    = "ssh"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -55,10 +55,12 @@ resource "aws_instance" "backend_server" {
 
   depends_on = [aws_route_table.main]
 
-  ami                  = data.aws_ami.ubuntu.id
-  instance_type        = "t3.nano"
-  availability_zone    = data.aws_availability_zones.available.names[count.index]
-  iam_instance_profile = aws_iam_instance_profile.backend_server.name
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t3.nano"
+  availability_zone      = data.aws_availability_zones.available.names[count.index]
+  iam_instance_profile   = aws_iam_instance_profile.backend_server.name
+  vpc_security_group_ids = [aws_security_group.backend_server.id]
+  subnet_id = aws_subnet.main[count.index].id
 
   tags = var.aws_tags
 }

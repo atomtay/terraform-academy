@@ -1,5 +1,5 @@
 output "todo_app_url" {
-  value = "http://${aws_s3_bucket.frontend.website_endpoint}"
+  value = "http://${aws_s3_bucket_website_configuration.frontend.website_endpoint}"
 }
 
 output "todo_backend_alb_url" {

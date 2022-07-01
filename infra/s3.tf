@@ -13,7 +13,7 @@ resource "aws_s3_bucket" "frontend" {
 }
 
 resource "aws_s3_bucket_acl" "frontend" {
-  bucket = aws_s3_bucket.frontend.bucket_domain_name
+  bucket = aws_s3_bucket.frontend.bucket
   acl    = "public-read"
 }
 
