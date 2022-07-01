@@ -19,13 +19,6 @@ resource "aws_security_group" "backend_server" {
   }
 
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = [for subnet in aws_subnet.main : subnet.cidr_block]
-  }
-
-  ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"

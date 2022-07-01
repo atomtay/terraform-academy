@@ -3,6 +3,27 @@ resource "aws_db_subnet_group" "main" {
   subnet_ids = aws_subnet.main.*.id
 }
 
+
+resource "aws_security_group" "postgres" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    description = "Allow ingress within private subnets on VPC on default port 5432"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [for subnet in aws_subnet.main : subnet.cidr_block]
+  }
+
+  egress {
+    description = "Allow egress/outbound from all sources on all ports"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "random_password" "postgres_admin_password" {
   length  = 32
   special = false
@@ -26,9 +47,10 @@ resource "aws_db_instance" "postgres" {
   allocated_storage      = 5
   password               = random_password.postgres_admin_password.result
   username               = "myadmin"
+  port                   = 5432
   multi_az               = true
   db_subnet_group_name   = aws_db_subnet_group.default.name
-  vpc_security_group_ids = [aws_security_group.backend_server.id]
+  vpc_security_group_ids = [aws_security_group.postgres.id]
 
   lifecycle {
     ignore_changes = [
