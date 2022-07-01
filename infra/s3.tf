@@ -9,21 +9,48 @@ resource "aws_s3_bucket" "frontend" {
   #checkov:skip=CKV_AWS_20:Website should be publicly accessible
   #checkov:skip=CKV_AWS_21:Versioning of websited is handled through git
   #checkov:skip=CKV_AWS_145:Don't encrypt publicly accessible website
+  bucket = "tf-acad-att-frontend"
 }
 
 resource "aws_s3_bucket_acl" "frontend" {
+  bucket = aws_s3_bucket.frontend.bucket_domain_name
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_logging" "frontend" {
+  bucket        = aws_s3_bucket.frontend.id
+  target_bucket = aws_s3_bucket.logging.id
+  target_prefix = "log/"
 }
 
 resource "aws_s3_bucket_website_configuration" "frontend" {
+  bucket = aws_s3_bucket.frontend.bucket
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "404.html"
+  }
 }
 
 resource "aws_s3_bucket_policy" "frontend" {
+  bucket = aws_s3_bucket.frontend.id
+  policy = data.aws_iam_policy_document.frontend.json
 }
 
 data "aws_iam_policy_document" "frontend" {
+  # NEED POLICY DOC FOR FRONTEND
+  statement {
+    sid       = "1"
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.frontend.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "frontend" {
@@ -31,6 +58,7 @@ resource "aws_s3_bucket_public_access_block" "frontend" {
   #checkov:skip=CKV_AWS_54:Website should be publicly accessible
   #checkov:skip=CKV_AWS_55:Website should be publicly accessible
   #checkov:skip=CKV_AWS_56:Website should be publicly accessible
+  bucket = aws_s3_bucket.frontend.id
 }
 
 

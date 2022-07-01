@@ -18,7 +18,8 @@ variable "github_repo" {
 }
 
 variable "github_user" {
-  type = string
+  type    = string
+  default = "atomtay"
 }
 
 variable "access_key" {

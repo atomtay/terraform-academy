@@ -16,6 +16,13 @@ resource "random_password" "postgres_app_password" {
 resource "aws_db_instance" "postgres" {
   #checkov:skip=CKV_AWS_17:Create public IP because we don't have access to private GH Actions runners
   apply_immediately = true
+  engine            = "postgresql"
+  engine_version    = "13.4"
+  instance_class    = "db.t3.micro"
+  allocated_storage = 5
+  password          = random_password.postgres_admin_password.result
+  username          = "admin"
+  multi_az          = true
 
   lifecycle {
     ignore_changes = [
