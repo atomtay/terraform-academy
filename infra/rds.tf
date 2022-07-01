@@ -19,15 +19,16 @@ resource "aws_db_subnet_group" "default" {
 
 resource "aws_db_instance" "postgres" {
   #checkov:skip=CKV_AWS_17:Create public IP because we don't have access to private GH Actions runners
-  apply_immediately    = true
-  engine               = "postgres"
-  engine_version       = "13.4"
-  instance_class       = "db.t3.micro"
-  allocated_storage    = 5
-  password             = random_password.postgres_admin_password.result
-  username             = "myadmin"
-  multi_az             = true
-  db_subnet_group_name = aws_db_subnet_group.default.name
+  apply_immediately      = true
+  engine                 = "postgres"
+  engine_version         = "13.4"
+  instance_class         = "db.t3.micro"
+  allocated_storage      = 5
+  password               = random_password.postgres_admin_password.result
+  username               = "myadmin"
+  multi_az               = true
+  db_subnet_group_name   = aws_db_subnet_group.default.name
+  vpc_security_group_ids = [aws_security_group.backend_server.id]
 
   lifecycle {
     ignore_changes = [
