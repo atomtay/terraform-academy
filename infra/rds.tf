@@ -48,6 +48,7 @@ resource "aws_db_instance" "postgres" {
   password               = random_password.postgres_admin_password.result
   username               = "myadmin"
   port                   = 5432
+  publicly_accessible    = true
   multi_az               = true
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.postgres.id]
