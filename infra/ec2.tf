@@ -22,7 +22,10 @@ resource "aws_security_group" "backend_server" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = [for subnet in aws_subnet.main : subnet.cidr_block]
+    cidr_blocks = concat(
+      aws_subnet.main.*.cidr_block,
+      aws_subnet.public.*.cidr_block,
+    )
   }
 
   ingress {
@@ -30,6 +33,22 @@ resource "aws_security_group" "backend_server" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "postgres-self"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    self        = true
+  }
+
+  ingress {
+    description = "postgres"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = aws_subnet.main.*.cidr_block
   }
 }
 
