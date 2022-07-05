@@ -75,6 +75,7 @@ resource "aws_instance" "backend_server" {
   subnet_id                   = aws_subnet.main[count.index].id
   associate_public_ip_address = true
   key_name = aws_key_pair.ssh_key.key_name
+  security_groups = [aws_security_group.backend_server.id]
 
   tags = var.aws_tags
 }
